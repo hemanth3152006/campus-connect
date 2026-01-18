@@ -5,16 +5,18 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Bus, GraduationCap, BookOpen, Shield } from "lucide-react";
 import campusHero from "@/assets/campus-hero.png";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 type UserRole = "student" | "teacher" | "driver" | "admin";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [selectedRole, setSelectedRole] = useState<UserRole>("student");
+  const [loading, setLoading] = useState(false);
 
   const roles = [
     { id: "student" as UserRole, label: "Student", icon: GraduationCap, color: "from-blue-500 to-cyan-500" },
@@ -23,10 +25,35 @@ const Login = () => {
     { id: "admin" as UserRole, label: "Admin", icon: Shield, color: "from-purple-500 to-pink-500" },
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Navigate based on role
-    navigate(`/dashboard/${selectedRole}`);
+    if (!agreed) {
+      toast({
+        title: "Please accept the terms",
+        description: "You must agree to the terms of Service to continue.",
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error || !data.user) {
+        toast({
+          title: "Login failed",
+          description: error?.message ?? "Invalid email or password.",
+        });
+        return;
+      }
+
+      navigate(`/dashboard/${selectedRole}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -69,7 +96,7 @@ const Login = () => {
                 Campus'360
               </h1>
               <p className="text-muted-foreground mt-2">
-                {isLogin ? "Welcome back! Sign in to continue" : "Create your account to get started"}
+                Welcome back! Sign in to continue
               </p>
             </div>
 
@@ -84,8 +111,7 @@ const Login = () => {
                     flex flex-col items-center gap-1.5 p-3 rounded-lg border transition-all duration-300
                     ${selectedRole === role.id 
                       ? "border-primary bg-primary/10 text-primary shadow-lg shadow-primary/20" 
-                      : "border-white/10 text-muted-foreground hover:border-white/20 hover:bg-white/5"
-                    }
+                      : "border-white/10 text-muted-foreground hover:border-white/20 hover:bg-white/5"}
                   `}
                 >
                   <role.icon className="w-5 h-5" />
@@ -118,6 +144,47 @@ const Login = () => {
                 />
               </div>
 
+              <div className="flex justify-end">
+                  <button
+                    type="button"
+                    className="text-xs text-primary hover:underline"
+                    onClick={async () => {
+                      if (!email) {
+                        toast({
+                          title: "Enter your email first",
+                          description: "Please type your email, then click reset.",
+                        });
+                        return;
+                      }
+
+                      try {
+                        setLoading(true);
+                        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                          redirectTo: window.location.origin,
+                        });
+
+                        if (error) {
+                          toast({
+                            title: "Reset failed",
+                            description: error.message,
+                          });
+                          return;
+                        }
+
+                        toast({
+                          title: "Reset link sent",
+                          description: "Check your email for a password reset link.",
+                        });
+                      } finally {
+                        setLoading(false);
+                      }
+                    }}
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+              
+
               <div className="flex items-center space-x-2">
                 <Checkbox 
                   id="terms" 
@@ -135,22 +202,11 @@ const Login = () => {
                 variant="glow" 
                 size="lg" 
                 className="w-full mt-6"
+                disabled={loading}
               >
-                {isLogin ? "Sign In" : "Create Account"}
+                {loading ? "Please wait..." : "Sign In"}
               </Button>
             </form>
-
-            {/* Toggle Login/Signup */}
-            <p className="text-center mt-8 text-muted-foreground">
-              {isLogin ? "Don't have an account?" : "Already a member?"}{" "}
-              <button
-                type="button"
-                onClick={() => setIsLogin(!isLogin)}
-                className="text-primary hover:underline font-medium"
-              >
-                {isLogin ? "Sign up" : "Sign in"}
-              </button>
-            </p>
           </div>
         </div>
       </div>

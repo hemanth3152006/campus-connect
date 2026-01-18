@@ -14,7 +14,94 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      users: {
+        Row: {
+          id: string
+          full_name: string | null
+          email: string | null
+          role: string | null
+          phone: string | null
+          route: string | null
+          pickup_point: string | null
+          is_active: boolean | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          full_name?: string | null
+          email?: string | null
+          role?: string | null
+          phone?: string | null
+          route?: string | null
+          pickup_point?: string | null
+          is_active?: boolean | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          full_name?: string | null
+          email?: string | null
+          role?: string | null
+          phone?: string | null
+          route?: string | null
+          pickup_point?: string | null
+          is_active?: boolean | null
+          created_at?: string | null
+        }
+        Relationships: []
+      },
+      routes: {
+        Row: {
+          id: string
+          name: string
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          created_at?: string | null
+        }
+        Relationships: []
+      },
+      route_stops: {
+        Row: {
+          id: string
+          route_id: string
+          name: string
+          sequence: number
+          lat: number
+          lng: number
+        }
+        Insert: {
+          id?: string
+          route_id: string
+          name: string
+          sequence: number
+          lat: number
+          lng: number
+        }
+        Update: {
+          id?: string
+          route_id?: string
+          name?: string
+          sequence?: number
+          lat?: number
+          lng?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "route_stops_route_id_fkey"
+            columns: ["route_id"]
+            referencedRelation: "routes"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
