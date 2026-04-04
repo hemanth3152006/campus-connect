@@ -9,6 +9,8 @@ import TeacherDashboard from "./pages/dashboard/TeacherDashboard";
 import DriverDashboard from "./pages/dashboard/DriverDashboard";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import NotFound from "./pages/NotFound";
+import { AuthProvider } from "@/context/AuthContext";
+import { DashboardRedirect, ProtectedRoute, PublicRoute } from "@/components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -17,33 +19,100 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          
-          {/* Student Dashboard Routes */}
-          <Route path="/dashboard/student" element={<StudentDashboard />} />
-          <Route path="/dashboard/student/*" element={<StudentDashboard />} />
-          
-          {/* Teacher Dashboard Routes */}
-          <Route path="/dashboard/teacher" element={<TeacherDashboard />} />
-          <Route path="/dashboard/teacher/*" element={<TeacherDashboard />} />
-          
-          {/* Driver Dashboard Routes */}
-          <Route path="/dashboard/driver" element={<DriverDashboard />} />
-          <Route path="/dashboard/driver/*" element={<DriverDashboard />} />
-          
-          {/* Admin Dashboard Routes */}
-          <Route path="/dashboard/admin" element={<AdminDashboard />} />
-          <Route path="/dashboard/admin/*" element={<AdminDashboard />} />
-          
-          {/* Redirect old index to login */}
-          <Route path="/login" element={<Navigate to="/" replace />} />
-          
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <PublicRoute>
+                  <Login />
+                </PublicRoute>
+              }
+            />
+            <Route path="/login" element={<Navigate to="/" replace />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <DashboardRedirect />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/dashboard/student"
+              element={
+                <ProtectedRoute allowedRoles={["student"]}>
+                  <StudentDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/student/*"
+              element={
+                <ProtectedRoute allowedRoles={["student"]}>
+                  <StudentDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/dashboard/teacher"
+              element={
+                <ProtectedRoute allowedRoles={["teacher"]}>
+                  <TeacherDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/teacher/*"
+              element={
+                <ProtectedRoute allowedRoles={["teacher"]}>
+                  <TeacherDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/dashboard/driver"
+              element={
+                <ProtectedRoute allowedRoles={["driver"]}>
+                  <DriverDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/driver/*"
+              element={
+                <ProtectedRoute allowedRoles={["driver"]}>
+                  <DriverDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/dashboard/admin"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/admin/*"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

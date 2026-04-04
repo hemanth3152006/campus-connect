@@ -222,6 +222,7 @@ const AdminDashboard = () => {
 
       // Then, create a profile in the public.users table
       const { error: profileError } = await supabase.from("users").insert({
+        id: authData.user.id,
         full_name: values.full_name,
         email: values.email,
         phone: values.phone || null,

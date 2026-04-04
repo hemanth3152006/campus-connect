@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -30,6 +31,7 @@ const DashboardLayout = ({ children, role }: DashboardLayoutProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { profile, role: authRole, signOut } = useAuth();
 
   const roleConfig = {
     student: {
@@ -171,15 +173,18 @@ const DashboardLayout = ({ children, role }: DashboardLayoutProps) => {
                   <User className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">Demo User</p>
-                  <p className="text-xs text-muted-foreground capitalize">{role}</p>
+                    <p className="text-sm font-medium truncate">{profile?.full_name ?? "Signed-in user"}</p>
+                    <p className="text-xs text-muted-foreground capitalize">{authRole ?? role}</p>
                 </div>
               </div>
               <Button 
                 variant="ghost" 
                 size="sm" 
                 className="w-full mt-3 text-muted-foreground hover:text-destructive"
-                onClick={() => navigate("/")}
+                  onClick={async () => {
+                    await signOut();
+                    navigate("/");
+                  }}
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 Sign Out

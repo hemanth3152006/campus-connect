@@ -7,8 +7,9 @@ import { Bus, GraduationCap, BookOpen, Shield } from "lucide-react";
 import campusHero from "@/assets/campus-hero.png";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import type { AppRole } from "@/context/AuthContext";
 
-type UserRole = "student" | "teacher" | "driver" | "admin";
+type UserRole = AppRole;
 
 const mapAuthError = (message?: string) => {
   const normalized = (message ?? "").toLowerCase();
@@ -64,6 +65,48 @@ const Login = () => {
         toast({
           title: "Login failed",
           description: mapAuthError(error?.message),
+        });
+        return;
+      }
+
+      const { data: profile, error: profileError } = await supabase
+        .from("users")
+        .select("role, is_active")
+        .eq("id", data.user.id)
+        .maybeSingle();
+
+      if (profileError) {
+        await supabase.auth.signOut();
+        toast({
+          title: "Login failed",
+          description: profileError.message,
+        });
+        return;
+      }
+
+      if (!profile) {
+        await supabase.auth.signOut();
+        toast({
+          title: "Profile missing",
+          description: "Your Supabase auth account exists, but no campus profile was found. Ask admin to add your profile.",
+        });
+        return;
+      }
+
+      if (profile.is_active === false) {
+        await supabase.auth.signOut();
+        toast({
+          title: "Account disabled",
+          description: "This user account is inactive. Contact your administrator.",
+        });
+        return;
+      }
+
+      if (profile.role !== selectedRole) {
+        await supabase.auth.signOut();
+        toast({
+          title: "Role mismatch",
+          description: `This account is registered as ${profile.role ?? "unknown"}. Please select the correct role or contact admin.`,
         });
         return;
       }
