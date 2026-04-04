@@ -10,6 +10,24 @@ import { toast } from "@/hooks/use-toast";
 
 type UserRole = "student" | "teacher" | "driver" | "admin";
 
+const mapAuthError = (message?: string) => {
+  const normalized = (message ?? "").toLowerCase();
+
+  if (normalized.includes("invalid login credentials")) {
+    return "Account not found or password is wrong. Ask admin to create your account first, then try again.";
+  }
+
+  if (normalized.includes("email not confirmed")) {
+    return "Your email is not confirmed yet. Open your inbox and verify your account, then login again.";
+  }
+
+  if (normalized.includes("fetch") || normalized.includes("network")) {
+    return "Network error while contacting Supabase. Check internet and verify your Supabase URL/key in .env.";
+  }
+
+  return message ?? "Unable to login right now. Please try again.";
+};
+
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -45,12 +63,18 @@ const Login = () => {
       if (error || !data.user) {
         toast({
           title: "Login failed",
-          description: error?.message ?? "Invalid email or password.",
+          description: mapAuthError(error?.message),
         });
         return;
       }
 
       navigate(`/dashboard/${selectedRole}`);
+    } catch (err) {
+      const description = err instanceof Error ? mapAuthError(err.message) : "Unexpected error during login.";
+      toast({
+        title: "Login failed",
+        description,
+      });
     } finally {
       setLoading(false);
     }
