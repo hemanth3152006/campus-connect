@@ -167,25 +167,26 @@ const AdminDashboard = () => {
    });
 
   const {
-     data: users = [],
-     isLoading: usersLoading,
-     error: usersError,
-     refetch: refetchUsers,
-   } = useQuery<UserRow[]>({
-     queryKey: ["admin-users"],
-     queryFn: async () => {
-       const { data, error } = await supabase
-         .from("users")
-         .select("id, full_name, email, role, phone, is_active, created_at")
-         .order("created_at", { ascending: false });
+    data: users = [],
+    isLoading: usersLoading,
+    error: usersError,
+    refetch: refetchUsers,
+  } = useQuery<UserRow[]>({
+    queryKey: ["admin-users"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-       if (error) {
-         throw new Error(error.message);
-       }
+      if (error) {
+        throw new Error(error.message);
+      }
 
-       return data ?? [];
-     },
-   });
+      return (data ?? []) as UserRow[];
+    },
+  });
+
   const {
     data: routes = [],
     isLoading: routesLoading,
@@ -195,14 +196,14 @@ const AdminDashboard = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("routes")
-        .select("id, name")
+        .select("*")
         .order("name", { ascending: true });
 
       if (error) {
         throw new Error(error.message);
       }
 
-      return data ?? [];
+      return (data ?? []) as RouteRow[];
     },
   });
 
