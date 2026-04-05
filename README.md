@@ -59,6 +59,18 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
+## Supabase admin bootstrap
+
+To create the first admin login:
+
+1. Create an Auth user in Supabase Dashboard under Authentication > Users.
+2. Copy that user's UUID.
+3. Open [supabase/bootstrap-admin.sql](supabase/bootstrap-admin.sql) and replace the placeholder email and UUID.
+4. Run the SQL file in the Supabase SQL editor.
+5. Log in in the app with the same email, password, and select the Admin role.
+
+The app requires a matching row in public.users for every auth user.
+
 ## How can I deploy this project?
 
 Simply open netlify (before that you have to publish it in your github)
