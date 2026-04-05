@@ -1,6 +1,7 @@
-# Welcome to your campus'360
+# Welcome to campus'360
 
 ## Project info
+smarter way to track your academices
 
 ## How can I edit this code?
 
@@ -60,8 +61,7 @@ This project is built with:
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
+Simply open netlify (before that you have to publish it in your github)
 ## Can I connect a custom domain to my Lovable project?
 
 Yes, you can!
