@@ -1,4 +1,4 @@
-  x cv-- Base schema for a fresh Campus360 Supabase project.
+  -- Base schema for a fresh Campus360 Supabase project.
 -- Run this before bootstrap-admin.sql.
 
 create extension if not exists pgcrypto;
