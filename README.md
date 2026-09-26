@@ -9,9 +9,9 @@ There are several ways of editing your application.
 
 **Use VS CODE**
 
-Simply Copy the link (https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+Simply Copy the link ( https://github.com/hemanth3152006/campus-connect.git ) and clone it in vs code 
 
-Changes made via VS CODE  will be committed .
+Changes made via VS CODE  will be committed *if you have been connected to gituhub.
 
 **Use your preferred IDE**
 

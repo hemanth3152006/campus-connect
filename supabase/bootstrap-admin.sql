@@ -1,12 +1,12 @@
 -- Bootstrap the first admin account for Campus360
 --
--- Run this in the Supabase SQL editor after you create the Auth user in
--- Authentication > Users.
+-- IMPORTANT:
+-- 1. Run supabase/schema.sql first so public.users exists.
+-- 2. Create the Auth user in Authentication > Users.
+-- 3. Replace the placeholder UUID and email below with the real values.
 --
--- Steps:
--- 1. Create the Auth user in Supabase Dashboard with email + password.
--- 2. Copy the user's UUID from Authentication > Users.
--- 3. Replace the placeholders below with the real values and run the script.
+-- Then run this file in the Supabase SQL editor.
+
 
 insert into public.users (
   id,
