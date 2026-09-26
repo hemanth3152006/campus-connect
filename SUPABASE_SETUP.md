@@ -49,7 +49,7 @@ values (
 
 ## Step 4: Login in the App
 
-1. Refresh the app (http://localhost:8081)
+1. Start the app locally with `npm run dev` and open the URL shown by Vite (normally http://localhost:8080)
 2. Enter:
    - Email: `admin@campus360.com` (same as step 1)
    - Password: `SecurePassword123!` (same as step 1)
@@ -79,3 +79,21 @@ values (
 ## To Add More Users
 
 Repeat Steps 1 & 2 for each new user (student, teacher, driver, etc).
+
+## Publish the app with Netlify
+
+1. Push the `campus-connect` folder to a GitHub repository.
+2. In Netlify, select **Add new site** > **Import an existing project** and choose the repository.
+3. Set these build settings:
+   - **Base directory:** `campus-connect` (leave blank if the repository itself contains this project)
+   - **Build command:** `npm run build`
+   - **Publish directory:** `dist`
+4. Add the following environment variables in **Site configuration** > **Environment variables**:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_PUBLISHABLE_KEY`
+   - `VITE_SUPABASE_PROJECT_ID`
+5. Deploy the site.
+6. In Supabase, open **Authentication** > **URL Configuration** and add the deployed Netlify URL to **Site URL** and **Redirect URLs**.
+7. Test each role with a real Supabase Auth user and a matching row in `public.users`.
+
+The `public/_redirects` file is required so refreshing `/dashboard/admin` (or another client-side route) works after deployment.

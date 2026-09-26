@@ -73,7 +73,7 @@ The app requires a matching row in public.users for every auth user.
 
 ## How can I deploy this project?
 
-Simply open netlify (before that you have to publish it in your github)
+See [SUPABASE_SETUP.md](SUPABASE_SETUP.md) for the complete database, user setup, and Netlify deployment steps.
 ## Can I connect a custom domain to my Lovable project?
 
 Yes, you can!

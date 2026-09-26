@@ -29,3 +29,25 @@ create table if not exists public.route_stops (
   lat double precision not null,
   lng double precision not null
 );
+
+insert into public.routes (name)
+select 'North Campus Loop'
+where not exists (
+  select 1 from public.routes where name = 'North Campus Loop'
+);
+
+insert into public.route_stops (route_id, name, sequence, lat, lng)
+select route.id, stop.name, stop.sequence, stop.lat, stop.lng
+from public.routes route
+cross join (values
+  ('Main Gate', 1, 12.9716, 77.5946),
+  ('Science Block', 2, 12.9752, 77.5990),
+  ('Hostel Entrance', 3, 12.9791, 77.6024)
+) as stop(name, sequence, lat, lng)
+where route.name = 'North Campus Loop'
+  and not exists (
+    select 1
+    from public.route_stops existing_stop
+    where existing_stop.route_id = route.id
+      and existing_stop.name = stop.name
+  );
